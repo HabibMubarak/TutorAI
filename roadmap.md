@@ -16,7 +16,7 @@ Diese Roadmap beschreibt die technische Umsetzung des TutorAI-Projekts ohne Code
 ### Container-Konfiguration (`docker-compose.yml` Specs)
 
 #### Service: `db`
-* **Image:** `postgres:16-alpine`
+* **Image:** `pgvector/pgvector:pg16`
 * **Volumes:** Mapping von `./pgdata` auf `/var/lib/postgresql/data` (Datenpersistenz).
 * **Environment:** `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` (aus `.env`).
 
@@ -43,7 +43,7 @@ SECRET_KEY=supersecretkey...  # Für JWT Token Generierung
 
 ### Library Auswahl
 * **ORM:** `SQLAlchemy` (Async Version) – modern und mächtig.
-* **Migration:** `Alembic` – für Schema-Updates.
+* **Migration:** `Alembic` – für Schema-Updates. Wichtig: Die erste Alembic-Migration muss den Befehl CREATE EXTENSION IF NOT EXISTS vector; enthalten, damit Postgres Vektoren verstehen kann.
 * **Validation:** `Pydantic V2` – für Datenaustausch API ↔ DB.
 
 ### Datenmodell-Spezifikation (`models.py`)
@@ -54,6 +54,18 @@ SECRET_KEY=supersecretkey...  # Für JWT Token Generierung
 * `hashed_password`: String
 * `grade_level`: Integer (z.B. 10)
 * `school_type`: Enum (Realschule, Gymnasium)
+
+#### Tabelle: `tasks`
+* `id`: UUID
+* `title`: String ("Mathe Arbeitsblatt 1")
+* `content`: Text (Der reine Text der Aufgabe)
+
+#### Tabelle: `task_embeddings`
+* `id`: Integer
+* `task_id`: ForeignKey
+* `chunk_content`: Text (Ein kleiner Schnipsel des Textes, z.B. eine einzelne Aufgabe)
+* `embedding`: Vector(768) (Der mathematische Vektor. 768 ist die Dimension von Geminis Embedding-Modell)
+
 
 #### Tabelle: `conversations` (Threads)
 * `id`: UUID
@@ -109,6 +121,26 @@ gymnasium:
 ### Agenten Spezifikation
 * **Router Agent:** Output muss striktes JSON sein (z.B. `{"intent": "math_explanation", "topic": "algebra"}`).
 * **Tutor Agent:** Muss Streaming unterstützen. Benötigt Zugriff auf "Tools" (siehe Phase 5).
+
+
+## Phase RAG: Knowledge Base & Vektorsuche
+**Ziel:** Der Tutor kennt die spezifischen Aufgabenblätter des Schülers.
+
+### Tech Stack Update
+* **DB Extension:** `pgvector` (via Docker Image `pgvector/pgvector:pg16`).
+* **Embedding Model:** `models/embedding-001` (via Google Gemini API).
+
+### Neuer Ablauf: "Document Ingestion"
+1.  **Parsing:** Text aus PDF/Bild extrahieren.
+2.  **Chunking:** Text in sinnvolle Abschnitte teilen (z.B. pro Aufgabe).
+3.  **Embedding:** Vektoren generieren.
+4.  **Storage:** In `task_embeddings` Tabelle speichern.
+
+### Neuer Ablauf: "Context Retrieval"
+Der **Orchestrator** erhält einen neuen Schritt vor dem LLM-Aufruf:
+* Generiere Embedding für User-Frage.
+* Führe SQL-Query aus: `SELECT chunk_content FROM task_embeddings ORDER BY embedding <-> query_embedding LIMIT 3;`
+* Füge die gefundenen Inhalte in den System-Prompt ein ("Nutze folgende Informationen zur Beantwortung: ...").
 
 ---
 
