@@ -1,1 +1,1 @@
-# tutorai
+# TutorAI
