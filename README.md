@@ -170,9 +170,8 @@ backend/
         └── user.py
 ```
 
-```text
-
 ### Frontend Struktur
+```text
 frontend/
 ├── Dockerfile
 ├── package.json
