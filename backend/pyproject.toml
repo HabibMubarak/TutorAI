@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi>=0.118.3",
+    "google-adk>=1.20.0",
     "google-genai>=1.53.0",
     "python-dotenv>=1.2.1",
 ]
