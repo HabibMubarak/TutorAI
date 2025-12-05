@@ -168,6 +168,8 @@ backend/
         ├── chat.py
         ├── feedback.py
         └── user.py
+```
+
 ```text
 
 ### Frontend Struktur
