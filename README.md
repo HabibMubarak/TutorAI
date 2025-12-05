@@ -51,6 +51,7 @@ Wie fließt eine Nachricht durch das System? Hier ist der Weg von der Tastatur d
 
 Die Architektur besteht nun aus **5 Schichten** (inklusive Operations/Monitoring):
 
+```text
 backend/
 ├── main.py                      # Startpunkt (Inkl. Middleware für Sentry/Prometheus)
 ├── alembic/                     # Datenbank-Migrationen
@@ -97,11 +98,10 @@ backend/
         ├── chat.py
         ├── feedback.py
         └── user.py
-
----
+```
 
 ## 2. Projektstruktur (fertig für Python)
-
+```text
 tutor-ai/
 ├── docker-compose.yml           # Startet Frontend, Backend, DB & Monitoring
 ├── .env                         # API-Keys, DB-URL, Sentry-DSN, LangSmith-Key
@@ -109,8 +109,10 @@ tutor-ai/
 ├── README.md
 ├── backend/
 └── frontend/
+```
 
 ### Backend Struktur
+```text
 backend/
 ├── Dockerfile
 ├── requirements.txt             # Jetzt inkl. sentry-sdk, langsmith, prometheus-client, tenacity
@@ -166,6 +168,7 @@ backend/
         ├── chat.py
         ├── feedback.py
         └── user.py
+```text
 
 ### Frontend Struktur
 frontend/
@@ -198,8 +201,8 @@ frontend/
     └── utils/
         ├── logger.ts             # Remote Logging (Frontend Errors -> Sentry)
         └── streamParser.ts
+```
 
----
 
 ## 3. Datenfluss-Beispiel mit Monitoring
 
