@@ -7,4 +7,4 @@ def health_check():
     """
     Docstring for health_check
     """
-    return {"status": "ok"}
+    return {"status": "ok", "message": "TutorAI System is healthy"}
