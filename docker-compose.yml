@@ -13,9 +13,10 @@ services:
     build:
       context: ./backend     # Wir gehen in den Ordner backend
       dockerfile: Dockerfile # Und nehmen das Dockerfile direkt von dort
-    ports:
-      - "8000:8000"
+    # No host port mapping for backend: the frontend dev server will proxy
+    # requests to the backend via the docker network. This avoids host port
+    # conflicts on 8000 and makes the setup work consistently for everyone.
     volumes:
       - ./backend:/app       # Der Tunnel: Dein Code auf dem PC -> Container
     # Damit der Server neu startet, wenn du speicherst (für Linux/Mac oft nötig):
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload
