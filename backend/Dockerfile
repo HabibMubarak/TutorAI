@@ -16,4 +16,4 @@ COPY . .
 
 # 6. Dieser Befehl startet den Server
 # host 0.0.0.0 ist wichtig, damit Docker von außen drauf zugreifen darf
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

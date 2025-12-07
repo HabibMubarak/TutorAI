@@ -4,7 +4,7 @@ function App() {
   const [status, setStatus] = useState<string>("Lade...");
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/health')
+    fetch('/api/health')
       .then(response => response.json())
       .then(data => {
         setStatus(data.message);          // <--- Zeigt ALLES an, egal wie es heißt
