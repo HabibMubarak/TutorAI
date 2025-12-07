@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: ./frontend    # Wir gehen in den Ordner frontend
+      dockerfile: Dockerfile # Und nehmen das Dockerfile direkt von dort
+    ports:
+      - "5173:5173"          # KORRIGIERT: 5173 (Standard für Vite)
+    volumes:
+      - ./frontend:/app      # Der Tunnel: Dein Code auf dem PC -> Container
+      - /app/node_modules    # WICHTIG: Verhindert, dass dein PC die Container-Bibliotheken überschreibt
+
+  backend:
+    build:
+      context: ./backend     # Wir gehen in den Ordner backend
+      dockerfile: Dockerfile # Und nehmen das Dockerfile direkt von dort
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app       # Der Tunnel: Dein Code auf dem PC -> Container
+    # Damit der Server neu startet, wenn du speicherst (für Linux/Mac oft nötig):
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
